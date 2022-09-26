@@ -152,7 +152,7 @@ function ApiList() {
 							})}
 						</select>
 
-						<div className="input-group d-flex justify-content-end  ">
+						<div className="input-group d-flex justify-content-end">
 							<button
 								className="btn btn-outline-secondary align-self-center"
 								type="button"
@@ -175,13 +175,13 @@ function ApiList() {
 										: changePageByCategory(page);
 								}}
 							/>
-							<div className="row d-flex justify-content-center gap-3 gap-md-4  px-2">
+							<div className="row d-flex justify-content-center gap-3 gap-md-4 px-2">
 								{apis.map((data, index) => {
 									return (
 										<div className="card" style={{ width: "30em" }} key={index}>
 											<div className="card-body">
 												<h5 className="card-title">{data.API}</h5>
-												<h6 className="card-subtitle mb-2 ">
+												<h6 className="card-subtitle mb-2">
 													<span>Author: </span>
 													{data.Auth ? (
 														data.Auth

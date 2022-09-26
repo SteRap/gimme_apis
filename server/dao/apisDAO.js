@@ -1,13 +1,4 @@
-import fetch from "node-fetch";
-
 let apis;
-
-// const data = async function GetAPIs() {
-// 	const APIsList = await fetch("https://api.publicapis.org/entries");
-// 	const response = await APIsList.json();
-
-// 	return response.entries;
-// };
 
 export default class APIsDAO {
 	static async injectDB(conn) {
@@ -16,17 +7,6 @@ export default class APIsDAO {
 		}
 		try {
 			apis = await conn.db(process.env.API_NS).collection("apis");
-			// if (apis == undefined) {
-			// 	try {
-			// 		apis = await conn
-			// 			.db(process.env.API_NS)
-			// 			.collection("apis")
-			// 			.insertMany(await data());
-			// 		console.log("data inserted in database");
-			// 	} catch (e) {
-			// 		console.log(e);
-			// 	}
-			// }
 		} catch (e) {
 			console.error(`Unable to establish a collection handle in APIsDAO: ${e}`);
 		}
