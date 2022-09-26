@@ -22,6 +22,8 @@ MongoClient.connect(process.env.API_DB_URI)
 		process.exit(1);
 	})
 	.then(async (client) => {
+		// dropping and re-create db everytime is not the best approach.
+		// However, it ensures to have the DB always up-to-date and in-sync with the JSON file
 		client.db(process.env.API_NS).collection("apis").drop();
 		client
 			.db(process.env.API_NS)
