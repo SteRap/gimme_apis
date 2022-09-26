@@ -16,6 +16,10 @@ class APIDataService {
 	getCategory(id) {
 		return http.get(`/categories`);
 	}
+
+	getNames(id) {
+		return http.get(`/names`);
+	}
 }
 
 export default new APIDataService();

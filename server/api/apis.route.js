@@ -5,5 +5,6 @@ const router = express.Router();
 
 router.route("/").get(APIsCtrl.apiGetAPIs);
 router.route("/categories").get(APIsCtrl.apiGetAPIsCategories);
+router.route("/names").get(APIsCtrl.apiGetAPIsNames);
 
 export default router;

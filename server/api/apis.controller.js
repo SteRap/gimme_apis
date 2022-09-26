@@ -41,4 +41,14 @@ export default class APIsController {
 			res.status(500).json({ error: e });
 		}
 	}
+
+	static async apiGetAPIsNames(req, res, next) {
+		try {
+			let names = await APIsDAO.getNames();
+			res.json(names);
+		} catch (e) {
+			console.log(`api, ${e}`);
+			res.status(500).json({ error: e });
+		}
+	}
 }

@@ -2,36 +2,34 @@ import React, { useState, useEffect, useContext } from "react";
 import APIDataService from "../services/apis";
 import PaginationComp from "./pagination";
 import { Context } from "../Context";
+import { Typeahead } from "react-bootstrap-typeahead";
 
 function ApiList() {
 	const [apis, setApis] = useState([]);
-	const [searchName, setSearchName] = useState("");
+	const [searchName, setSearchName] = useState([""]);
+	const [names, setNames] = useState([]);
 	const [searchCategory, setSearchCategory] = useState("");
 	const [page, setPage] = useState(0);
 	const [total, setTotal] = useState(0);
-	const { current, setCurrent } = useContext(Context);
 	const [categories, setCategories] = useState(["All Categories"]);
-	console.log(searchCategory);
+	const { current, setCurrent } = useContext(Context);
+
 	useEffect(() => {
 		retrieveAPIs();
 		retrieveCategories();
+		retrieveNames();
 	}, []);
 
 	useEffect(() => {
-		if (searchCategory === "All Categories") {
+		if (searchCategory === encodeURIComponent("All Categories")) {
 			retrieveAPIs();
 		} else {
 			findByCategory();
 		}
 	}, [searchCategory]);
 
-	const onChangeSearchName = (e) => {
-		const searchName = e.target.value;
-		setSearchName(searchName);
-	};
-
 	const onChangeSearchCategory = (e) => {
-		const searchCategory = e.target.value;
+		const searchCategory = encodeURIComponent(e.target.value);
 		setSearchCategory(searchCategory);
 	};
 
@@ -57,9 +55,20 @@ function ApiList() {
 			});
 	};
 
+	const retrieveNames = () => {
+		APIDataService.getNames()
+			.then((response) => {
+				setNames(response.data);
+			})
+			.catch((e) => {
+				console.log(e);
+			});
+	};
+
 	const refreshList = () => {
 		retrieveAPIs();
-		setSearchCategory("All Categories");
+		setSearchCategory(encodeURIComponent("All Categories"));
+		setSearchName([""]);
 	};
 
 	const find = (query, by) => {
@@ -94,16 +103,16 @@ function ApiList() {
 			});
 	};
 
-	const findByName = () => {
-		find(searchName, "API");
-	};
-
 	const findByCategory = () => {
-		if (searchCategory === "All Category") {
+		if (encodeURIComponent(searchCategory) === "All Category") {
 			refreshList();
 		} else {
 			find(searchCategory, "Category");
 		}
+	};
+
+	const findByName = () => {
+		find(searchName, "API");
 	};
 
 	return (
@@ -111,33 +120,32 @@ function ApiList() {
 			<div className="row justify-content-center mx-0">
 				<div className="row pb-1 ">
 					<div className="d-flex flex-column flex-md-row gap-2 px-0">
-						<div className="input-group mx-0">
-							<input
-								type="text"
-								className="form-control"
-								placeholder="Search by Name"
-								value={searchName}
-								onChange={onChangeSearchName}
+						<div className="d-flex col-12 col-md-4 ">
+							<Typeahead
+								id="basic-example"
+								onChange={setSearchName}
+								options={names}
+								selected={searchName}
+								placeholder="Search an API..."
+								style={{ marginRight: "0.2rem", width: "100%" }}
 							/>
-							<div className="input-group-append">
-								<button
-									className="btn btn-outline-secondary"
-									type="button"
-									onClick={findByName}
-								>
-									Search
-								</button>
-							</div>
+							<button
+								className="btn btn-outline-secondary "
+								type="button"
+								onClick={findByName}
+							>
+								Search
+							</button>
 						</div>
 
 						<select
-							className="form-select"
+							className="form-select ms-md-2"
 							onChange={onChangeSearchCategory}
-							value={searchCategory}
+							value={decodeURIComponent(searchCategory)}
 						>
-							{categories.map((category) => {
+							{categories.map((category, index) => {
 								return (
-									<option key={category} value={category}>
+									<option key={index} value={category}>
 										{category}
 									</option>
 								);
@@ -146,12 +154,7 @@ function ApiList() {
 
 						<div className="input-group d-flex justify-content-end  ">
 							<button
-								className="btn btn-outline-primary align-self-center"
-								disabled={
-									searchCategory === "All Categories" && searchName.length === 0
-										? true
-										: false
-								}
+								className="btn btn-outline-secondary align-self-center"
 								type="button"
 								onClick={refreshList}
 							>
@@ -167,7 +170,7 @@ function ApiList() {
 								page={page}
 								changePage={(page) => {
 									searchCategory.length === 0 ||
-									searchCategory === "All Categories"
+									searchCategory === encodeURIComponent("All Categories")
 										? changePage(page)
 										: changePageByCategory(page);
 								}}
@@ -175,11 +178,7 @@ function ApiList() {
 							<div className="row d-flex justify-content-center gap-3 gap-md-4  px-2">
 								{apis.map((data, index) => {
 									return (
-										<div
-											className="card"
-											style={{ width: "30em" }}
-											key={data.id}
-										>
+										<div className="card" style={{ width: "30em" }} key={index}>
 											<div className="card-body">
 												<h5 className="card-title">{data.API}</h5>
 												<h6 className="card-subtitle mb-2 ">
@@ -196,7 +195,7 @@ function ApiList() {
 												<h6 className="btn btn-outline-secondary btn-sm">
 													{data.Category}
 												</h6>
-												<p>
+												<div>
 													<a
 														href={`${data.Link}`}
 														target="_blank"
@@ -205,7 +204,7 @@ function ApiList() {
 													>
 														{data.Link}
 													</a>
-												</p>
+												</div>
 											</div>
 										</div>
 									);

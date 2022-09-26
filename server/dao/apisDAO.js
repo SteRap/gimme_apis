@@ -28,9 +28,7 @@ export default class APIsDAO {
 			// 	}
 			// }
 		} catch (e) {
-			console.error(
-				`Unable to establish a collection handle in restaurantsDAO: ${e}`
-			);
+			console.error(`Unable to establish a collection handle in APIsDAO: ${e}`);
 		}
 	}
 
@@ -78,6 +76,17 @@ export default class APIsDAO {
 		} catch (e) {
 			console.error(`Unable to get categories, ${e}`);
 			return categories;
+		}
+	}
+
+	static async getNames() {
+		let names = [];
+		try {
+			names = await apis.distinct("API");
+			return names;
+		} catch (e) {
+			console.error(`Unable to get APIs names, ${e}`);
+			return names;
 		}
 	}
 }
